@@ -1,0 +1,1 @@
+Do not read .env file no matter what
