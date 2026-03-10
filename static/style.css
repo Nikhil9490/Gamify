@@ -11,7 +11,6 @@
 }
 
 html, body {
-  height: 100%;
   min-height: 100vh;
 }
 
@@ -1069,9 +1068,7 @@ body.burnt .timer-container { background: rgba(255, 30, 0, 0.12); border-color: 
 
 /* App wrapper */
 #app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 
 /* Screens */
