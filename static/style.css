@@ -1426,7 +1426,7 @@ select {
   .btn { padding: 10px 20px; }
   .steps-row { gap: 8px; }
   .step-arrow { display: none; }
-  .chef-scene { gap: 12px; }
-  .chef-emoji { font-size: 2.2rem; }
-  .pot-emoji  { font-size: 2rem; }
+  .chef-timer-row { flex-direction: column; }
+  .chef-stage { width: auto; }
+  .timer-container { width: 100%; }
 }
