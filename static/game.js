@@ -66,16 +66,42 @@ function getDishRating(correct, total, burnt) {
 }
 
 // ── Timer ─────────────────────────────────────────
-let timerInterval = null;
+let timerInterval      = null;
+let ingredientInterval = null;
 let timeLeft      = 120;
 let timeBurnt     = false;
 const TOTAL_TIME  = 120;
 
+const INGREDIENTS = ['🧄', '🧅', '🌿', '🧂', '🫒', '🥕', '🍋', '🌶️', '🫙', '🍃'];
+
+function dropIngredient() {
+  if (timeBurnt || timeLeft <= 30) return;
+  const stage = document.querySelector('.chef-stage');
+  const armR  = document.querySelector('#chef-character .ch-arm-r');
+  if (!stage || !armR) return;
+
+  const item = document.createElement('span');
+  item.className   = 'ch-ingredient-drop';
+  item.textContent = INGREDIENTS[Math.floor(Math.random() * INGREDIENTS.length)];
+  stage.appendChild(item);
+
+  armR.classList.add('raising');
+  setTimeout(() => {
+    item.remove();
+    armR.classList.remove('raising');
+  }, 1250);
+}
+
 function startTimer() {
   timeLeft  = TOTAL_TIME;
   timeBurnt = false;
-  document.body.classList.remove('urgent', 'burnt');
+  document.body.classList.remove('urgent', 'burnt', 'cooking-fresh', 'cooking-mid');
+  document.body.classList.add('cooking-fresh');
   updateTimerDisplay();
+
+  // First ingredient drop after 3s, then every 18s
+  setTimeout(() => dropIngredient(), 3000);
+  ingredientInterval = setInterval(() => dropIngredient(), 18000);
 
   timerInterval = setInterval(() => {
     timeLeft--;
@@ -102,7 +128,11 @@ function stopTimer() {
     clearInterval(timerInterval);
     timerInterval = null;
   }
-  document.body.classList.remove('urgent', 'burnt');
+  if (ingredientInterval) {
+    clearInterval(ingredientInterval);
+    ingredientInterval = null;
+  }
+  document.body.classList.remove('urgent', 'burnt', 'cooking-fresh', 'cooking-mid');
 }
 
 function updateTimerDisplay() {
@@ -113,6 +143,14 @@ function updateTimerDisplay() {
   const mins = Math.floor(timeLeft / 60);
   const secs = timeLeft % 60;
   display.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+  // Cooking stage body classes (drive pot liquid/bubble changes)
+  document.body.classList.remove('cooking-fresh', 'cooking-mid');
+  if (timeLeft > 60) {
+    document.body.classList.add('cooking-fresh');
+  } else if (timeLeft > 0) {
+    document.body.classList.add('cooking-mid');
+  }
 
   // Color state + chef mood
   display.classList.remove('yellow', 'red');
@@ -726,6 +764,15 @@ function renderResultScreen(results, correctCount, completeData, burnt) {
       <p class="feedback-explanation">
         <strong>Chef's note:</strong> ${escapeHtml(r.explanation || '')}
       </p>
+      ${r.source_quote ? `
+        <div class="citation-box">
+          <span class="citation-icon">📄</span>
+          <div class="citation-content">
+            <div class="citation-quote">"${escapeHtml(r.source_quote)}"</div>
+            <div class="citation-page">— Page ${r.source_page || '?'}</div>
+          </div>
+        </div>
+      ` : ''}
     `;
     feedbackContainer.appendChild(feedbackEl);
   });

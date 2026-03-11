@@ -129,7 +129,7 @@
   <section class="screen" id="location-screen">
     <div class="container">
 
-      <!-- Station header -->
+      <!-- Station header — full width -->
       <div class="station-header">
         <div class="station-header-icon" id="loc-icon">🍳</div>
         <div class="station-header-info">
@@ -139,87 +139,99 @@
         </div>
       </div>
 
-      <!-- Chef + Timer Row -->
-      <div class="chef-timer-row">
+      <!-- 2-column layout: sticky chef panel + scrollable questions -->
+      <div class="location-layout">
 
-        <!-- CSS Chef Character -->
-        <div class="chef-stage">
-          <div class="chef-character" id="chef-character" data-mood="happy">
-            <div class="ch-hat">
-              <div class="ch-hat-puff"></div>
-              <div class="ch-hat-brim"></div>
-            </div>
-            <div class="ch-head">
-              <div class="ch-brow ch-brow-l"></div>
-              <div class="ch-brow ch-brow-r"></div>
-              <div class="ch-eye ch-eye-l"><div class="ch-pupil"></div></div>
-              <div class="ch-eye ch-eye-r"><div class="ch-pupil"></div></div>
-              <div class="ch-cheek ch-cheek-l"></div>
-              <div class="ch-cheek ch-cheek-r"></div>
-              <div class="ch-mouth"></div>
-              <div class="ch-sweat"></div>
-            </div>
-            <div class="ch-body">
-              <div class="ch-arm ch-arm-l"></div>
-              <div class="ch-arm ch-arm-r"><div class="ch-spoon"></div></div>
-              <div class="ch-btn ch-btn-1"></div>
-              <div class="ch-btn ch-btn-2"></div>
-            </div>
-          </div>
-          <!-- Stove & Pot -->
-          <div class="ch-stove">
-            <div class="ch-steam-row">
-              <span class="ch-steam-puff sp1"></span>
-              <span class="ch-steam-puff sp2"></span>
-              <span class="ch-steam-puff sp3"></span>
-            </div>
-            <div class="ch-pot-group">
-              <div class="ch-pot-lid"></div>
-              <div class="ch-pot-bowl-row">
-                <div class="ch-pot-handle"></div>
-                <div class="ch-pot-bowl"></div>
-                <div class="ch-pot-handle"></div>
+        <!-- LEFT: sticky chef + timer panel -->
+        <div class="chef-panel">
+          <div class="chef-stage">
+            <div class="chef-character" id="chef-character" data-mood="happy">
+              <div class="ch-hat">
+                <div class="ch-hat-puff"></div>
+                <div class="ch-hat-brim"></div>
+              </div>
+              <div class="ch-head">
+                <div class="ch-brow ch-brow-l"></div>
+                <div class="ch-brow ch-brow-r"></div>
+                <div class="ch-eye ch-eye-l"><div class="ch-pupil"></div></div>
+                <div class="ch-eye ch-eye-r"><div class="ch-pupil"></div></div>
+                <div class="ch-cheek ch-cheek-l"></div>
+                <div class="ch-cheek ch-cheek-r"></div>
+                <div class="ch-mouth"></div>
+                <div class="ch-sweat"></div>
+              </div>
+              <div class="ch-body">
+                <div class="ch-arm ch-arm-l"></div>
+                <div class="ch-arm ch-arm-r"><div class="ch-spoon"></div></div>
+                <div class="ch-btn ch-btn-1"></div>
+                <div class="ch-btn ch-btn-2"></div>
               </div>
             </div>
-            <div class="ch-stove-top"></div>
-            <div class="ch-fire hidden" id="fire-emoji">🔥🔥🔥</div>
+            <!-- Stove & Pot -->
+            <div class="ch-stove">
+              <div class="ch-steam-row">
+                <span class="ch-steam-puff sp1"></span>
+                <span class="ch-steam-puff sp2"></span>
+                <span class="ch-steam-puff sp3"></span>
+              </div>
+              <div class="ch-pot-group">
+                <div class="ch-pot-lid"></div>
+                <div class="ch-pot-bowl-row">
+                  <div class="ch-pot-handle"></div>
+                  <div class="ch-pot-bowl">
+                    <div class="ch-pot-liquid" id="pot-liquid"></div>
+                    <div class="ch-pot-bubbles">
+                      <span class="ch-bubble b1"></span>
+                      <span class="ch-bubble b2"></span>
+                      <span class="ch-bubble b3"></span>
+                    </div>
+                  </div>
+                  <div class="ch-pot-handle"></div>
+                </div>
+              </div>
+              <div class="ch-stove-top"></div>
+              <div class="ch-fire hidden" id="fire-emoji">🔥🔥🔥</div>
+            </div>
+          </div>
+
+          <!-- Timer (below chef) -->
+          <div class="timer-container" id="timer-container">
+            <div class="timer-label">Time Remaining</div>
+            <div class="timer-display" id="timer-display">2:00</div>
+            <div class="timer-bar-wrap">
+              <div class="timer-bar" id="timer-bar"></div>
+            </div>
+            <div class="timer-status" id="timer-status">Let's cook! 🍳</div>
           </div>
         </div>
 
-        <!-- Timer -->
-        <div class="timer-container" id="timer-container">
-          <div class="timer-label">Time Remaining</div>
-          <div class="timer-display" id="timer-display">2:00</div>
-          <div class="timer-bar-wrap">
-            <div class="timer-bar" id="timer-bar"></div>
+        <!-- RIGHT: scrollable questions panel -->
+        <div class="questions-panel">
+          <!-- Alert -->
+          <div class="alert alert-error" id="location-error"></div>
+
+          <!-- Narrative -->
+          <div class="narrative-box" id="narrative-text">
+            The chef is preparing the brief...
           </div>
-          <div class="timer-status" id="timer-status">Let's cook! 🍳</div>
+
+          <!-- Questions form -->
+          <form id="quiz-form" onsubmit="return false;">
+            <div id="questions-container">
+              <!-- Injected by JS -->
+            </div>
+
+            <button class="btn btn-primary btn-full" id="submit-answers-btn" onclick="submitAnswers()">
+              🍽️ Submit Dish
+            </button>
+          </form>
+
+          <!-- Back to map -->
+          <div class="text-center mt-3">
+            <button class="btn btn-secondary" onclick="abandonStation()">← Back to Kitchen</button>
+          </div>
         </div>
 
-      </div>
-
-      <!-- Alert -->
-      <div class="alert alert-error" id="location-error"></div>
-
-      <!-- Narrative -->
-      <div class="narrative-box" id="narrative-text">
-        The chef is preparing the brief...
-      </div>
-
-      <!-- Questions form -->
-      <form id="quiz-form" onsubmit="return false;">
-        <div id="questions-container">
-          <!-- Injected by JS -->
-        </div>
-
-        <button class="btn btn-primary btn-full" id="submit-answers-btn" onclick="submitAnswers()">
-          🍽️ Submit Dish
-        </button>
-      </form>
-
-      <!-- Back to map -->
-      <div class="text-center mt-3">
-        <button class="btn btn-secondary" onclick="abandonStation()">← Back to Kitchen</button>
       </div>
     </div>
   </section>

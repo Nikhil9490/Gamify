@@ -360,17 +360,56 @@ body.chef input[type="radio"]:checked + .option-label {
 }
 
 /* ════════════════════════════════════════════════
-   CHEF + TIMER ROW LAYOUT
+   LOCATION 2-COLUMN LAYOUT
 ════════════════════════════════════════════════ */
-.chef-timer-row {
+.location-layout {
   display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* LEFT sticky panel: chef + timer */
+.chef-panel {
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;   /* critical: prevents stretching, enables sticky */
+  flex-shrink: 0;
+  width: 170px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 14px 16px;
-  background: rgba(45, 32, 22, 0.6);
-  border: 1px solid rgba(255, 107, 53, 0.25);
-  border-radius: 10px;
-  margin-bottom: 14px;
+  gap: 14px;
+  padding: 16px 10px 18px;
+  background: rgba(45, 32, 22, 0.7);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  border-radius: 12px;
+}
+
+/* Scale the chef up inside the panel */
+.chef-panel .chef-stage {
+  zoom: 1.55;
+}
+
+/* Timer fills the panel width */
+.chef-panel .timer-container {
+  width: 100%;
+  padding: 10px 12px 10px;
+}
+
+.chef-panel .timer-display {
+  font-size: 2.1rem;
+  letter-spacing: 2px;
+}
+
+/* RIGHT scrollable content */
+.questions-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Keep the old class for any remaining references */
+.chef-timer-row {
+  display: none;
 }
 
 .chef-stage {
@@ -379,6 +418,38 @@ body.chef input[type="radio"]:checked + .option-label {
   align-items: center;
   flex-shrink: 0;
   width: 100px;
+  position: relative;
+}
+
+/* ── Ingredient Drop ── */
+.ch-ingredient-drop {
+  position: absolute;
+  font-size: 0.88rem;
+  right: 4px;
+  top: 126px;
+  pointer-events: none;
+  z-index: 10;
+  line-height: 1;
+  animation: ingredient-fall 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes ingredient-fall {
+  0%   { transform: translate(0,   0)   rotate(0deg)   scale(1);   opacity: 1; }
+  30%  { transform: translate(-5px, 18px)  rotate(120deg) scale(0.9); opacity: 1; }
+  65%  { transform: translate(-18px, 48px) rotate(260deg) scale(0.65); opacity: 0.8; }
+  100% { transform: translate(-26px, 72px) rotate(380deg) scale(0.1); opacity: 0; }
+}
+
+/* ── Arm Raise (when adding ingredient) ── */
+.ch-arm-r.raising {
+  animation: ch-arm-raise 1.2s ease-in-out forwards !important;
+}
+@keyframes ch-arm-raise {
+  0%   { transform: rotate(-28deg); }
+  20%  { transform: rotate(-92deg); }
+  48%  { transform: rotate(-88deg); }
+  75%  { transform: rotate(-50deg); }
+  100% { transform: rotate(-28deg); }
 }
 
 /* ════════════════════════════════════════════════
@@ -681,10 +752,71 @@ body.chef input[type="radio"]:checked + .option-label {
 .ch-pot-bowl {
   width: 54px;
   height: 34px;
-  background: linear-gradient(160deg, #777, #444);
+  background: linear-gradient(160deg, #444, #252525);
   border-radius: 0 0 12px 12px;
-  box-shadow: inset -3px -3px 8px rgba(0,0,0,0.35);
+  box-shadow: inset -3px -3px 8px rgba(0,0,0,0.45);
+  position: relative;
+  overflow: hidden;
 }
+
+/* ── Pot Liquid ── */
+.ch-pot-liquid {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 62%;
+  background: linear-gradient(180deg, #d49040 0%, #8b4820 100%);
+  border-radius: 0 0 10px 10px;
+  transition: background 4s ease, height 0.5s ease;
+}
+
+/* Liquid color changes as cooking progresses */
+body.cooking-mid .ch-pot-liquid {
+  background: linear-gradient(180deg, #e05020 0%, #7a2010 100%);
+  height: 65%;
+}
+body.urgent .ch-pot-liquid {
+  background: linear-gradient(180deg, #f03010 0%, #601008 100%);
+  height: 68%;
+  animation: liquid-swell 0.45s ease-in-out infinite alternate;
+}
+body.burnt .ch-pot-liquid {
+  background: linear-gradient(180deg, #2a1208 0%, #0d0603 100%);
+  animation: none;
+}
+
+@keyframes liquid-swell {
+  from { height: 66%; }
+  to   { height: 70%; }
+}
+
+/* ── Pot Bubbles ── */
+.ch-pot-bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ch-bubble {
+  position: absolute;
+  bottom: 4px;
+  border-radius: 50%;
+  background: rgba(255, 210, 120, 0.75);
+  animation: ch-bubble-up 3s ease-in infinite;
+}
+.b1 { left: 18%; width: 4px; height: 4px; animation-delay: 0s; }
+.b2 { left: 52%; width: 6px; height: 6px; animation-delay: 1.1s; }
+.b3 { left: 78%; width: 4px; height: 4px; animation-delay: 2.0s; }
+
+@keyframes ch-bubble-up {
+  0%   { transform: translateY(0) scale(1);   opacity: 0.85; }
+  70%  { transform: translateY(-18px) scale(1.15); opacity: 0.4; }
+  100% { transform: translateY(-24px) scale(0.3);  opacity: 0; }
+}
+
+/* Speed up bubbles with cooking stage */
+body.cooking-mid .ch-bubble { animation-duration: 1.8s; background: rgba(255,150,60,0.8); }
+body.urgent .ch-bubble       { animation-duration: 0.75s; background: rgba(255,80,20,0.9); }
+body.burnt .ch-bubble        { animation-play-state: paused; opacity: 0; }
 
 .ch-stove-top {
   width: 92px;
@@ -1002,6 +1134,44 @@ body.burnt .timer-container { background: rgba(255, 30, 0, 0.12); border-color: 
   color: #c4a882;
   line-height: 1.5;
   margin-bottom: 4px;
+}
+
+/* Source citation box */
+.citation-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(255, 107, 53, 0.06);
+  border-left: 3px solid rgba(255, 107, 53, 0.4);
+  border-radius: 0 6px 6px 0;
+}
+
+.citation-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: 0.75;
+}
+
+.citation-content {
+  flex: 1;
+}
+
+.citation-quote {
+  font-size: 0.82rem;
+  color: #c4a882;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.citation-page {
+  font-size: 0.75rem;
+  color: #9a7a5a;
+  margin-top: 4px;
+  font-family: 'Georgia', serif;
+  letter-spacing: 0.3px;
 }
 
 /* ════════════════════════════════════════════════
@@ -1423,7 +1593,18 @@ select {
   .btn { padding: 10px 20px; }
   .steps-row { gap: 8px; }
   .step-arrow { display: none; }
-  .chef-timer-row { flex-direction: column; }
+  .location-layout { flex-direction: column; }
+  .chef-panel {
+    position: static;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+  .chef-panel .chef-stage { zoom: 1.1; }
+  .chef-panel .timer-container { flex: 1; }
+  .chef-panel .timer-display { font-size: 2.4rem; }
   .chef-stage { width: auto; }
   .timer-container { width: 100%; }
 }
